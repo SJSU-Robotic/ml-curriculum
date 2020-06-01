@@ -1,18 +1,18 @@
 # ML Curriculum for Computer Vision and Object Detection
+Adapted from [Spring 2020](http://cs231n.stanford.edu/2020/syllabus.html) and [Spring 2017](http://cs231n.stanford.edu/2017/syllabus.html) iterations of [Stanford University's CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/index.html)
 
 ## Prerequisistes
-
 * Basic understanding of Python (variables, classes, for loops)
-* Knowledge of probability, statistics, linear algebra, and multivariate calculus is required! No math review follows.
+* Knowledge of probability, statistics, linear algebra, and multivariate calculus is needed! Unfortunately, we will not be providing a math review.
 * Basic learning of machine learning goes a long way, but is not needed.
 
-
-**Table of Contents**
-1. Pytorch and Neural Network Structure Introduction, Software Setup and Installations
-2. Vanilla Neural Networks, Forward and Backward Propagation
-3. Convolutional Neural Networks, Batch Normalization, Dropout
-4. Training Neural Networks, Pt. 1
-5. Training Neural Networks, Pt. 2
-6. Existing CNN Architecture Analysis
-7. Object Detection Pt. 1
-8. Object Detection Pt. 2
+## Syllabus
+* [Week 1 | Course intro, history of computer vision, image classification](week1.md)
+* [Week 2 | Loss Functions and Optimization](week2.md)
+* [Week 3 | Vanilla Neural Networks, Forward and Backward Propagation](week3.md)
+* [Week 4 | Convolutional Neural Networks, Batch Normalization, Dropout](week4.md)
+* [Week 5 | Training Neural Networks, Pt. 1](week5.md)
+* [Week 6 | Training Neural Networks, Pt. 2](week6.md)
+* [Week 7 | Review of Existing CNN Architectures](week7.md)
+* [Week 8 | Object Detection and Segmentation](week8.md)
+* [Week 9 and 10 | Capstone Project](capstone.md)
