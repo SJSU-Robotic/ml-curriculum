@@ -12,4 +12,6 @@
 
 ## Homework
 
+- [Run through these PyTorch examples](assignments/pytorch-examples/README.md)
+    - Note, if this file doesn't exist, you may need to run `git submodule update --init --recursive`
 - [Implement a convolutional neural network in PyTorch](assignments/colab/2020/module2/PyTorch.ipynb)
