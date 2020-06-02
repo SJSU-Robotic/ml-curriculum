@@ -1,7 +1,7 @@
 # ML Curriculum for Computer Vision and Object Detection
 Adapted from [Spring 2020](http://cs231n.stanford.edu/2020/syllabus.html) and [Spring 2017](http://cs231n.stanford.edu/2017/syllabus.html) iterations of [Stanford University's CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/index.html)
 
-## Prerequisistes
+## Prerequisites
 * Basic understanding of Python (variables, classes, for loops)
 * Knowledge of probability, statistics, linear algebra, and multivariate calculus is needed! Unfortunately, we will not be providing a math review.
 * Basic learning of machine learning goes a long way, but is not needed.
