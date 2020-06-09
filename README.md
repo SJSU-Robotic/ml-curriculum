@@ -25,3 +25,5 @@ Adapted from [Spring 2020](http://cs231n.stanford.edu/2020/syllabus.html) and [S
 * https://colab.research.google.com/
 ### Textbook
 * Goodfellow, I., Bengio, Y., and Courville, A. (2016). Deep Learning. MIT Press. Retrieved from http://www.deeplearningbook.org/
+### Publishing your work back to Github
+* Check out [this guide](readings/publishing_to_github.pdf)
