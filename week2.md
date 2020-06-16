@@ -1,5 +1,5 @@
 # ML Track | Week 2
-[Back to the README](README.md)
+Navigate to [README](README.md) | [Week 1](week1.md) ⬅️ Week 2 ➡️ [Week 3](week3.md)
 
 ## Readings
 * [Lecture 3 Slides](readings/cs231n_2017_lecture3.pdf)
@@ -14,3 +14,10 @@
 
 ## Homework
 * [Implement a support vector machine](assignments/colab/2020/module1/svm.ipynb)
+    * Solutions:
+        * [`svm.ipynb`](assignments/local/2020/assignment1/svm.ipynb)
+        * [`linear_svm.py`](assignments/local/2020/assignment1/cs231n/classifiers/linear_svm.py)
+        * [`linear_classifier.py`](assignments/local/2020/assignment1/cs231n/classifiers/linear_classifier.py)
+
+## ~~Workshop~~ Solution Recording for Last Week's Exercise
+* [Solution to Week 1's Homework](https://youtu.be/5UFN32Oq3p4)

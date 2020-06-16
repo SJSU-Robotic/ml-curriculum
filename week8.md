@@ -1,5 +1,5 @@
 # ML Track | Week 8
-[Back to the README](README.md)
+Navigate to [README](README.md) | [Week 7](week7.md) ⬅️ Week 8
 
 ## Readings
 

@@ -1,5 +1,5 @@
 # ML Track | Week 1
-[Back to the README](README.md)
+Navigate to [README](README.md) | Week 1 ➡️ [Week 2](week2.md)
 
 ## Readings
 * [(Optional) Lecture 1 Slides](readings/cs231n_2017_lecture1.pdf)
