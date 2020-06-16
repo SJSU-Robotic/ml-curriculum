@@ -77,7 +77,7 @@ class KNearestNeighbor(object):
                 #####################################################################
                 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-                dists[i, j] = np.sqrt(np.sum((X[i] - self.X_train[j])**2))
+                dists[i, j] = np.sqrt(np.sum( (X[i] - self.X_train[j])**2 ))
 
                 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists
@@ -101,7 +101,7 @@ class KNearestNeighbor(object):
             #######################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-            pass
+            dists[i, :] = np.sqrt(np.sum( (X[i] - self.X_train)**2, axis=1))
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists
@@ -131,7 +131,17 @@ class KNearestNeighbor(object):
         #########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
+        # dist  = sqrt( ((I_1 - I_2) * (I_1 - I_2)) )                                                                                    # consider the elementwise distance
+        # dist  = sqrt( (I_1 * I_1       - I_2 * I_1 - I_1 * I_2        + I_2 * I_2) )                                                   # multiply the binomials
+        # dist  = sqrt(     square(I_1)  - 2 * I_1 * I_2                + square(I_2) )                                                  # simplify
+        # dists = sqrt( sum(square(I_1)) - 2 * I_1.dot(I_2.transpose()) + sum(square(I_2)) )                                             # consider the array
+        # dists = np.sqrt(np.sum(np.square(I_1)) - 2 * I_1.dot(I_2.transpose()) + np.sum(np.square(I_2)))                                # use the np functions
+        # dists = np.sqrt(np.sum(np.square(X)) - 2 * X.dot(self.X_train.transpose()) + np.sum(np.square(self.X_train)))                  # replace variable names
+        # dists = np.sqrt(np.sum(np.square(X), axis=1) - 2 * X.dot(self.X_train.transpose()) + np.sum(np.square(self.X_train), axis=1))) # but check the shapes
+        #                 (500,1)                        (500, 5000)                           (5000,)
+        dists = np.sum(np.square(X).reshape(X.shape[0],1), axis=2) \
+                - 2 * X.dot(self.X_train.transpose()) \
+                + np.sum(np.square(self.X_train), axis=1)
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists
@@ -164,7 +174,9 @@ class KNearestNeighbor(object):
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-            pass
+            min_indices = np.argsort(dists[i])
+            for j in range(k): # select k distances, appending the least distances
+                closest_y.append(self.y_train[min_indices[j]])
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
             #########################################################################
@@ -176,7 +188,7 @@ class KNearestNeighbor(object):
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-            pass
+            y_pred[i] = np.bincount(closest_y).argmax() # bincount() counts the occurrences, and argmax() selects the most occurrent item
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
