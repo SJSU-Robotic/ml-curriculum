@@ -1,5 +1,5 @@
 # ML Track | Week 1
-[Back to the README](README.md)
+Navigate to [README](README.md) | Week 1 ➡️ [Week 2](week2.md)
 
 ## Readings
 * [(Optional) Lecture 1 Slides](readings/cs231n_2017_lecture1.pdf)
@@ -19,8 +19,8 @@
 ## Homework
 * [Implement a k-Nearest Neighbor classifier](assignments/colab/2020/module1/knn.ipynb)
     * Solutions:
-        * [`knn.ipynb`](assignments/colab/2020/module1/knn.ipynb)
-        * [`k_nearest_neighbor.py`](assignments/colab/2020/module1/cs231n/classifiers/k_nearest_neighbor.py)
+        * [`knn.ipynb`](assignments/solutions/week1/knn.ipynb)
+        * [`k_nearest_neighbor.py`](assignments/solutions/week1/k_nearest_neighbor.py)
 
 ## Workshop Recording
 * [Week 1 Workshop](https://youtu.be/Okfb8qHNDmk)

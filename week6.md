@@ -1,5 +1,5 @@
 # ML Track | Week 6
-[Back to the README](README.md)
+Navigate to [README](README.md) | [Week 5](week5.md) ⬅️ Week 6 ➡️ [Week 7](week7.md)
 
 ## Readings
 
