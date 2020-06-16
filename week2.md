@@ -15,9 +15,9 @@ Navigate to [README](README.md) | [Week 1](week1.md) ⬅️ Week 2 ➡️ [Week 
 ## Homework
 * [Implement a support vector machine](assignments/colab/2020/module1/svm.ipynb)
     * Solutions:
-        * [`svm.ipynb`](assignments/local/2020/assignment1/svm.ipynb)
-        * [`linear_svm.py`](assignments/local/2020/assignment1/cs231n/classifiers/linear_svm.py)
-        * [`linear_classifier.py`](assignments/local/2020/assignment1/cs231n/classifiers/linear_classifier.py)
+        * [`svm.ipynb`](assignments/solutions/week2/svm.ipynb)
+        * [`linear_svm.py`](assignments/solutions/week2/linear_svm.py)
+        * [`linear_classifier.py`](assignments/solutions/week2/linear_classifier.py)
 
 ## ~~Workshop~~ Solution Recording for Last Week's Exercise
 * [Solution to Week 1's Homework](https://youtu.be/5UFN32Oq3p4)
