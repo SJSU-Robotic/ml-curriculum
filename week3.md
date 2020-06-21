@@ -15,6 +15,10 @@ Navigate to [README](README.md) | [Week 2](week2.md) ⬅️ Week 3 ➡️ [Week 
 ## Homework
 * [Implement a softmax classifier](assignments/colab/2020/module1/softmax.ipynb)
     * Check out the above reading on [computing the analytic gradient for softmax](https://cs231n.github.io/neural-networks-case-study/#grad)
+    * Solutions
+        * [softmax.ipynb](assignments/solutions/week3/softmax.ipynb)
+        * [softmax.py](assignments/solutions/week3/softmax.py)
+        * [Video explanation](https://youtu.be/47vHdLcDlT8)
 
 ## Workshop Recording
 * [Week 3 Workshop](https://youtu.be/xPS31n0rZl4)
