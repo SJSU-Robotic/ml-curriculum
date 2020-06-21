@@ -33,25 +33,7 @@ def softmax_loss_naive(W, X, y, reg):
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    num_train   = X.shape[0]
-    num_classes = W.shape[1]
-
-    for i in range(num_train):
-      scores  = X[i].dot(W)  # unnormalized log probabilities
-      scores -= scores.max() # shift scores to avoid numeric instability
-      probs   = np.exp(scores) / np.sum(np.exp(scores))
-      for j in range(num_classes):
-        if j == y[i]:
-          loss       += -1 * np.log(probs[y[i]])
-          # dW[:,y[i]] += -1 * (1 - probs[y[i]]) * X[i]
-          dW[:,y[i]] += (probs[y[i]] - 1) * X[i]
-        else:
-          dW[:,j]    +=  probs[j]         * X[i]
-    
-    loss /= num_train
-    loss += reg * np.sum(np.square(W))
-    dW   /= num_train
-    dW   += 2 * reg * W
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -76,26 +58,7 @@ def softmax_loss_vectorized(W, X, y, reg):
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    num_train   = X.shape[0]
-    num_classes = W.shape[1]
-
-    scores  = X.dot(W)
-    scores -= np.max(scores, axis=1, keepdims=True) # shift scores to avoid numeric instability
-
-    # calculate loss
-    scores_of_correct_labels = scores[range(num_train), y]
-    loss  = -np.sum( np.log( np.exp(scores_of_correct_labels) / \
-                             np.sum(np.exp(scores), axis=1)     ) )
-    loss /= num_train
-    loss += reg * np.sum(np.square(W))
-
-    # calculate gradient
-    probabilities = np.exp(scores)/np.sum(np.exp(scores), axis=1, keepdims=True)
-    indicators    = np.zeros_like(scores)
-    indicators[range(num_train), y] = 1
-    dW  = X.transpose().dot(probabilities - indicators)
-    dW /= num_train
-    dW += 2 * reg * W
+    pass
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
