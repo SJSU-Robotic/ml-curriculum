@@ -110,7 +110,7 @@ class TwoLayerNet(object):
         # calculate losses
         loss  = -np.log(probs[range(N), y]) # losses from correct labels
         loss  = np.sum(loss) / N            # sum up data losses and calculate mean
-        loss += reg * (np.sum(np.square(W1)) + np.sum(np.square(W2))) # add regulatization
+        loss += reg * (np.sum(np.square(W1)) + np.sum(np.square(W2))) # add regularization
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
