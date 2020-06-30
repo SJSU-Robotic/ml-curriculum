@@ -80,7 +80,10 @@ class TwoLayerNet(object):
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
+        y1 = X.dot(W1) + b1    # scores for first layer
+        h1 = np.maximum(0, y1) # zero out negative scores
+        y2 = h1.dot(W2) + b2   # scores for second layer
+        scores = y2
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -98,7 +101,16 @@ class TwoLayerNet(object):
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
+        # calculate stabilized scores for numeric stability
+        stab_scores = scores - np.max(scores, axis=1, keepdims=True)
+
+        # calculate probabilities
+        probs = np.exp(stab_scores) / np.sum(np.exp(stab_scores), axis=1, keepdims=True)
+
+        # calculate losses
+        loss  = -np.log(probs[range(N), y]) # losses from correct labels
+        loss  = np.sum(loss) / N            # sum up data losses and calculate mean
+        loss += reg * (np.sum(np.square(W1)) + np.sum(np.square(W2))) # add regulatization
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -111,8 +123,36 @@ class TwoLayerNet(object):
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
+        # calculate gradients of y2 = h1.dot(W2) + b2
+        # apply gradient of softmax loss
+        dy2 = probs
+        dy2[range(N), y] -= 1
+        dy2 /= N
+        # gradient w.r.t weight W2
+        dW2 = h1.T.dot(dy2)
+        # gradient w.r.t bias b2
+        db2 = np.sum(dy2, axis=0)
 
+        # gradient w.r.t scores
+        dh1 = dy2.dot(W2.T)
+
+        # gradient of y1 = X.dot(W1) + b1
+        # apply gradient of relu
+        dy1 = dh1 * (y1 >= 0) 
+        # gradient w.r.t weight W1
+        dW1 = X.T.dot(dy1)
+        # gradient w.r.t bias b1
+        db1 = np.sum(dy1, axis=0)
+
+        # regularize
+        dW1 += 2 * reg * W1
+        dW2 += 2 * reg * W2
+
+        # store onto dictionary
+        grads['W1'] = dW1
+        grads['W2'] = dW2
+        grads['b1'] = db1
+        grads['b2'] = db2
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         return loss, grads
@@ -156,7 +196,9 @@ class TwoLayerNet(object):
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-            pass
+            indices = np.random.choice(num_train, batch_size, replace=True)
+            X_batch = X[indices]
+            y_batch = y[indices]
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -172,7 +214,10 @@ class TwoLayerNet(object):
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-            pass
+            self.params['W1'] += -learning_rate * grads['W1']
+            self.params['W2'] += -learning_rate * grads['W2']
+            self.params['b1'] += -learning_rate * grads['b1']
+            self.params['b2'] += -learning_rate * grads['b2']
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -218,7 +263,19 @@ class TwoLayerNet(object):
         ###########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
+        W1 = self.params['W1']
+        W2 = self.params['W2']
+        b1 = self.params['b1']
+        b2 = self.params['b2']
+
+        # the next four lines are identical to loss() forward pass
+        y1 = X.dot(W1) + b1    # scores for first layer
+        h1 = np.maximum(0, y1) # zero out negative scores
+        y2 = h1.dot(W2) + b2   # scores for second layer
+        scores = y2
+
+        # highest scoring label is what we predict
+        y_pred = np.argmax(scores, axis=1) 
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
