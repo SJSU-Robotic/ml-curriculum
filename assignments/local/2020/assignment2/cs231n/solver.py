@@ -133,6 +133,7 @@ class Solver(object):
         self.checkpoint_name = kwargs.pop("checkpoint_name", None)
         self.print_every = kwargs.pop("print_every", 10)
         self.verbose = kwargs.pop("verbose", True)
+        self.verbose_epoch = kwargs.pop("verbose_epoch", True)
 
         # Throw an error if there are extra keyword arguments
         if len(kwargs) > 0:
@@ -292,7 +293,7 @@ class Solver(object):
                 self.val_acc_history.append(val_acc)
                 self._save_checkpoint()
 
-                if self.verbose:
+                if self.verbose_epoch:
                     print(
                         "(Epoch %d / %d) train acc: %f; val_acc: %f"
                         % (self.epoch, self.num_epochs, train_acc, val_acc)

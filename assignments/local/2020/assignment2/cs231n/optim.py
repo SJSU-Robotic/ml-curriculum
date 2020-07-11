@@ -69,7 +69,12 @@ def sgd_momentum(w, dw, config=None):
     ###########################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    pass
+    # from https://cs231n.github.io/neural-networks-3/#sgd
+    # v = mu * v - learning_rate * dx # integrate velocity
+    # x += v # integrate position
+
+    v = config['momentum'] * v - config['learning_rate'] * dw # integrate velocity
+    next_w = w + v # integrate position
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     ###########################################################################
@@ -107,7 +112,12 @@ def rmsprop(w, dw, config=None):
     ###########################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    pass
+    # from https://cs231n.github.io/neural-networks-3/#ada
+    # cache = decay_rate * cache + (1 - decay_rate) * dx**2
+    # x += - learning_rate * dx / (np.sqrt(cache) + eps)
+
+    config['cache'] = config['decay_rate'] * config['cache'] + (1 - config['decay_rate']) * dw**2
+    next_w = w - config['learning_rate'] * dw / (np.sqrt(config['cache']) + config['epsilon'])
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     ###########################################################################
@@ -152,7 +162,22 @@ def adam(w, dw, config=None):
     ###########################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    pass
+    # from https://cs231n.github.io/neural-networks-3/#ada
+    # # t is your iteration counter going from 1 to infinity
+    # m = beta1*m + (1-beta1)*dx
+    # mt = m / (1-beta1**t)
+    # v = beta2*v + (1-beta2)*(dx**2)
+    # vt = v / (1-beta2**t)
+    # x += - learning_rate * mt / (np.sqrt(vt) + eps)
+
+    config['t'] = config['t'] if (config['t'] > 0) else 1 # ensure t is within bounds
+
+    config['m'] = config['beta1']*config['m'] + (1-config['beta1'])*dw
+    mt = config['m'] / (1-config['beta1']**config['t'])
+    config['v'] = config['beta2']*config['v'] + (1-config['beta2'])*(dw**2)
+    vt = config['v'] / (1-config['beta2']**config['t'])
+    next_w = w - config['learning_rate'] * mt / (np.sqrt(vt) + config['epsilon'])
+
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
     ###########################################################################
