@@ -1,0 +1,57 @@
+# Week 4 Assignment
+These are the assets related to the week 4 assignments, `two_layer_net.ipynb` and `features.ipynb`
+
+Note: the notebooks listed here are **not** Google Colab optimized, but can be adapted for Colab. Do the following, then upload to Colab (make sure to adhere to the specified file structure)
+1. adding a cell at the top of the notebook with the following code block, and
+2. replacing `None` with your Google Drive's path to the `cs231n` folder (as specified in the comment block)
+
+```
+from google.colab import drive
+
+drive.mount('/content/drive', force_remount=True)
+
+"""
+# enter the foldername in your Drive where you have saved the unzipped
+# 'cs231n' folder containing the '.py', 'classifiers' and 'datasets'
+# folders.
+# e.g. 'cs231n/assignments/assignment1/cs231n/'
+"""
+FOLDERNAME = None
+
+assert FOLDERNAME is not None, "[!] Enter the foldername."
+
+%cd drive/My\ Drive
+%cp -r $FOLDERNAME ../../
+%cd ../../
+%cd cs231n/datasets/
+!bash get_datasets.sh
+%cd ../../
+```
+
+
+## File structure
+* `assignment1/`
+    * **`two_layer_net.ipynb`**
+    * **`features.ipynb`**
+    * `cs231n/`
+        * `classifiers/`
+            * **`neural_net.py`**
+
+## Context and meta
+* **`two_layer_net.ipynb`**
+    * Practice concepts from lecture to implement a two-layer fully-connected network, including
+        * forward propagation, 
+        * backward propagation,
+        * training via SGD optimizer,
+        * inference, and most importantly for this assignment,
+        * hyperparameter tuning
+* **`features.ipynb`**
+    * Examine how well the performance of linear classifiers and two-layer fully-connected networks can improve by training/inferring on features rather than on raw pixels. Feature extractors for this experiment:
+        * `hog_feature()`, which computes a Histogram of Oriented Gradients (HOG)
+        * `color_histogram_hsv()`, which computes a color histogram using the hue channel in HSV color space
+* **`neural_net.py`**
+    * Assigned TODOs/tasks to students - implementation of 
+        * `TwoLayerNet`: implementation is the focus of `two_layer_net.ipynb`, but is also used in `features.ipynb`
+            * `loss()`: forward pass/propagation (computing scores, data + reg loss), and backward pass/propagation
+            * `train()`
+            * `predict()`
