@@ -12,7 +12,7 @@ Navigate to [README](README.md) | [Week 6](week6.md) ⬅️ Week 7 ➡️ [Week 
 
 ## Lecture Videos
 
-- [(Optional) Lecture 8 | Deep Learning Software](http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture8.pdf)
+- [(Optional) Lecture 8 | Deep Learning Software](https://www.youtube.com/watch?v=6SlgtELqOWc&list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv&index=8)
 - [Lecture 9 | CNN Architectures](https://www.youtube.com/watch?v=DAOcjicFr1Y&list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv)
 
 ## Homework
