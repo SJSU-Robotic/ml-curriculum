@@ -213,10 +213,10 @@ class FullyConnectedNet(object):
         for layer in range(1, self.num_layers + 1):
             self.params['W%d' % layer] = np.random.normal( 0, scale = weight_scale, size=(dims[layer-1], dims[layer]) )
             self.params['b%d' % layer] = np.zeros(dims[layer])
-            # don't worry about batchnorm or layernorm for now
-            # if self.normalization == "batchnorm":
-            #     self.params['gamma%d' % (i+1)] = np.ones((1,1))
-            #     self.params['beta%d' % (i+1)] = np.zeros((1,1))
+            if self.normalization == "batchnorm" and layer != self.num_layers:
+                self.params['gamma%d' % (layer)] = np.ones((1,1))
+                self.params['beta%d' % (layer)] = np.zeros((1,1))
+            # don't worry layernorm for now
             # elif self.normalization == "layernorm":
             #     pass
 
@@ -241,9 +241,9 @@ class FullyConnectedNet(object):
         # pass of the second batch normalization layer, etc.
         self.bn_params = []
         if self.normalization == "batchnorm":
-            self.bn_params = [{"mode": "train"} for i in range(self.num_layers - 1)]
+            self.bn_params = [{"mode": "train"} for i in range(self.num_layers)]
         if self.normalization == "layernorm":
-            self.bn_params = [{} for i in range(self.num_layers - 1)]
+            self.bn_params = [{} for i in range(self.num_layers)]
 
         # Cast all parameters to the correct datatype
         for k, v in self.params.items():
@@ -289,14 +289,19 @@ class FullyConnectedNet(object):
                                                        self.params['b%d' % (layer)])
                 cache_history.append(cache)
             else:
-                # don't worry about batchnorm or layernorm for now
-                # if self.normalization == "batchnorm":
-                #     scores, cache = batchnorm_forward(x, gamma, beta, bn_param)
+                if self.normalization == "batchnorm":
+                    scores, cache = affine_batchnorm_forward(scores, self.params['W%d' % (layer)],
+                                                                     self.params['b%d' % (layer)],
+                                                                     self.params['gamma%d' % (layer)], 
+                                                                     self.params['beta%d' % (layer)], 
+                                                                     self.bn_params[layer])
+                # don't worry about layernorm for now
                 # elif self.normalization == "layernorm":
                 #     scores, cache = layernorm_forward(x, gamma, beta, ln_param)
                 # else: # self.normalization might as well be None
-                scores, cache = affine_relu_forward(scores, self.params['W%d' % (layer)],
-                                                            self.params['b%d' % (layer)])
+                else:
+                    scores, cache = affine_relu_forward(scores, self.params['W%d' % (layer)],
+                                                                self.params['b%d' % (layer)])
                 cache_history.append(cache)
                 # additionally append dropout layer, if applicable
                 if self.use_dropout:
@@ -344,13 +349,17 @@ class FullyConnectedNet(object):
                 # first: gradient from dropout layer, if applicable
                 if self.use_dropout:
                     dx = dropout_backward(dx, cache_history.pop())
-                # don't worry about batchnorm or layernorm for now
-                # if self.normalization == "batchnorm":
-                #     dx, dgamma, dbeta = batchnorm_backward(dout, cache)
+                if self.normalization == "batchnorm":
+                    dx, \
+                    grads["W%d" % layer], \
+                    grads["b%d" % layer], \
+                    grads["gamma%d" % layer], \
+                    grads["beta%d" % layer] = affine_batchnorm_backward(dx, cache_history.pop())
+                # don't worry about layernorm for now
                 # elif self.normalization == "layernorm":
                 #     dx, dgamma, dbeta = layernorm_backward(dout, cache)
-                # else: # self.normalization might as well be None
-                dx, grads["W%d" % layer], grads["b%d" % layer] = affine_relu_backward(dx, cache_history.pop())
+                else: # self.normalization might as well be None
+                    dx, grads["W%d" % layer], grads["b%d" % layer] = affine_relu_backward(dx, cache_history.pop())
             # add on regularization
             grads["W%d" % layer] += self.reg * self.params["W%d" % layer]
 
@@ -360,3 +369,36 @@ class FullyConnectedNet(object):
         ############################################################################
 
         return loss, grads
+
+### helper layers defined here
+def affine_batchnorm_forward(x, w, b, gamma, beta, bn_param):
+    """
+    Convenience layer that performs 
+        an affine transform, followed by 
+        a batchnorm transform, followed by
+        a ReLU
+
+    Inputs:
+    - x: Input to the affine layer
+    - w, b: Weights for the affine layer
+    - gamma, beta, bn_param: params for batchnorm
+
+    Returns a tuple of:
+    - out: Output from the ReLU
+    - cache: Object to give to the backward pass
+    """
+    a, fc_cache = affine_forward(x, w, b)
+    bn, bn_cache = batchnorm_forward(a, gamma, beta, bn_param)
+    out, relu_cache = relu_forward(bn)
+    cache = (fc_cache, bn_cache, relu_cache)
+    return out, cache
+
+def affine_batchnorm_backward(dout, cache):
+    """
+    Backward pass for the affine-batchnorm convenience layer
+    """
+    fc_cache, bn_cache, relu_cache = cache
+    da = relu_backward(dout, relu_cache)
+    dbn, dgamma, dbeta = batchnorm_backward_alt(da, bn_cache)
+    dx, dw, db = affine_backward(dbn, fc_cache)
+    return dx, dw, db, np.sum(dgamma), np.sum(dbeta)
