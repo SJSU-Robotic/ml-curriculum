@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # auth ntwong0
 
-import os, errno
+import os, errno, math, argparse
 from PIL import Image, ImageOps
 import numpy as np 
+
+""" 
+# _TODO_ apply imgaug augmentations
 import imgaug as ia
 import imgaug.augmenters as iaa
 import imgaug.random as iar
@@ -24,14 +27,6 @@ def prismatize_imgaug(images, random_state, parents, hooks):
     # print(ret_images.shape)
     # return ret_images
     return np.stack(ret_images, axis=0).reshape(len(ret_images), *ret_images[0].shape)
-
-
-# output shape is (height, width, 4), corresponding to RGBA format for .png's with alpha
-def ndarray_from_pillow(image, is_grayscale=False):
-    if is_grayscale:
-        return np.asarray(image.convert("RGBA"))
-    else:
-        return np.asarray(image)
 
 def ndarray_from_filename(dirname, filename):
     return np.asarray(Image.open(dirname + "/" + filename))
@@ -55,24 +50,8 @@ aug = iaa.Lambda(prismatize_imgaug)
 # note:
 # pillow.Image.size: (width, height, channels)
 # np.ndarray.shape:  (height, width, channels)
+"""
 
-dir_tags        = "ar_tags"
-dir_posts       = "posts"
-dir_humans      = "humans"
-dir_bgs         = "desert_backgrounds"
-dir_images      = "images"
-dir_annotations = "annotations"
-
-# pixel params
-_720p_height     = 720
-_720p_width      = 1280
-_1440p_height    = 1440
-_1440p_width     = 2560
-post_height_max  = 144  # 10% of _1440p_height
-tag_width_max    = 28   # 20% of post_height_max
-human_height_max = 864  # 60% of _1440p_height
-
-###
 """ unoptimized (don't use)
 
 # get tags and resize
@@ -102,22 +81,22 @@ posts = [ImageOps.expand(post,
 # load file, modify, convert to ndarray, then np.stack
 # example: processing for humans
 
-# scale_factor = np.random.uniform(0.0001, 0.9999)
 def prismatize(
     tag_np, 
     scale_factor, 
     ret_type="pil" # "np" to return numpy.ndarray, or "pil" to return PIL.PngImagePlugin.PngImageFile
 ):
-    if scale_factor <= 0 or scale_factor >= 1: 
+    try:
+        image_left   = Image.fromarray(tag_np)
+        image_left   = image_left.resize((int(image_left.size[0] * scale_factor), image_left.size[1]), Image.ANTIALIAS)
+        image_right  = Image.fromarray(tag_np)
+        image_right  = image_right.resize((int(image_right.size[0] * (1 - scale_factor)), image_right.size[1]), Image.ANTIALIAS)
+        padding      = (image_left.size[0], 0, 0, 0)
+        image_right  = ImageOps.expand(image_right, padding)
+        image        = Image.composite(image_left, image_right, image_left)
+        return np.asarray(image) if ret_type is "np" else image
+    except ValueError: # scale_factor too low / too high to create a second image for prismatization
         return tag_np if ret_type is "np" else Image.fromarray(tag_np)
-    image_left   = Image.fromarray(tag_np)
-    image_left   = image_left.resize((int(image_left.size[0] * scale_factor), image_left.size[1]), Image.ANTIALIAS)
-    image_right  = Image.fromarray(tag_np)
-    image_right  = image_right.resize((int(image_right.size[0] * (1 - scale_factor)), image_right.size[1]), Image.ANTIALIAS)
-    padding      = (image_left.size[0], 0, 0, 0)
-    image_right  = ImageOps.expand(image_right, padding)
-    image        = Image.composite(image_left, image_right, image_left)
-    return np.asarray(image) if ret_type is "np" else image
 
 def crop_and_pad_post(
     post_np,
@@ -138,6 +117,13 @@ def get_dat_dir(dir_cat, dir_dat):
 def pillow_from_filename(dirname, filename):
     return Image.open(dirname + "/" + filename)
 
+# output shape is (height, width, 4), corresponding to RGBA format for .png's with alpha
+def ndarray_from_pillow(image, is_grayscale=False):
+    if is_grayscale:
+        return np.asarray(image.convert("RGBA"))
+    else:
+        return np.asarray(image)
+
 """ load_data
         Loads data from various directories into memory. Accommodations must be made to limit the number of open 
         filesystem hooks due to Image.open(), therefore we convert them to np.ndarrays
@@ -149,7 +135,7 @@ def pillow_from_filename(dirname, filename):
         bg_metas
 """
 def load_data(
-    # directories for data
+    # directory params
     dir_parent,
     dir_tags        = "ar_tags",
     dir_posts       = "posts",
@@ -157,14 +143,14 @@ def load_data(
     dir_bgs         = "desert_backgrounds",
     dir_images      = "images",
     dir_annotations = "annotations",
-    # parameters
+    # pixel params
     _720p_height     = 720,
     _720p_width      = 1280,
     _1440p_height    = 1440,
     _1440p_width     = 2560,
     post_height_max  = 144,  # 10% of _1440p_height
     tag_width_max    = 28,   # 20% of post_height_max
-    human_height_max = 864   # 60% of _1440p_height
+    human_height_max = 288   # 20% of _1440p_height
 ):
     # chdir to parent directory
     os.chdir(dir_parent)
@@ -175,7 +161,7 @@ def load_data(
         if "._" in tags_fn: continue # ignore macOS metadata files
         tag = pillow_from_filename(get_dat_dir(dir_tags, dir_images), tags_fn)
         tag.thumbnail((tag_width_max, tag_width_max), Image.ANTIALIAS)
-        tags.append(np.asarray(tag))
+        tags.append(ndarray_from_pillow(tag, is_grayscale=True))
     # get posts and resize
     posts = list()
     posts_fns = sorted(os.listdir(get_dat_dir(dir_posts, dir_images)))
@@ -192,7 +178,7 @@ def load_data(
                         0
                     )
                 )
-        posts.append(np.asarray(post))
+        posts.append(ndarray_from_pillow(post))
     # get humans and resize
     humans = list()
     humans_fns = sorted(os.listdir(get_dat_dir(dir_humans, dir_images)))
@@ -201,7 +187,7 @@ def load_data(
         human = pillow_from_filename(get_dat_dir(dir_humans, dir_images),human_fn)
         ratio = human_height_max/human.size[1]
         human = human.resize((int(human.size[0] * ratio), int(human.size[1] * ratio)))
-        humans.append(np.asarray(human))
+        humans.append(ndarray_from_pillow(human))
     # get backgrounds and resize
     bgs, bgs_ratios = list(), list()
     bgs_fns = sorted(os.listdir(get_dat_dir(dir_bgs, dir_images)))
@@ -213,7 +199,7 @@ def load_data(
         ratio        = ratio_width if ratio_width >= ratio_height else ratio_height
         bgs_ratios.append(ratio)
         bg           = bg.resize((int(bg.size[0] * ratio), int(bg.size[1] * ratio)))
-        bgs.append(np.asarray(bg))
+        bgs.append(ndarray_from_pillow(bg))
     # get background annotations, extract distances to pixels mapping
     # header: bottom_right_x, bottom_right_y, top_left_x, top_left_y, dist_bottom, dist_top
     bg_metas = list()
@@ -239,6 +225,12 @@ def load_data(
 
 
 """ generate_images
+    outputs: 
+        if storage_setting == "filesystem:
+            None
+        else:
+            image_nps:   list of all np.ndarray'd images generated, len(images) == count
+            annotations: list of all image meta generated, len(annotations) == count
 """
 def generate_images(
     # inputs
@@ -248,19 +240,31 @@ def generate_images(
     bgs,
     bg_metas,
     # params
-    dir_dest        = "generated",
+    gen_type        = "full",        # full  : 720x1280 
+    #                                # square: 28x28
+    count           = 30,            # images to generate
+    seed            = 0,
+    verbosity       = 1,             # 0: no verbosity, 
+    #                                # 1: print filename and annotations to console
+    #                                # 2: previous + show images (avoid for count vars > 30)
+    storage_setting = "filesystem",  # where will generated images and annotations be stored?
+    #                                #  filesystem: store to filesystem at dir_dest
+    #                                #  memory:     store and output 
+    #                                #  both:       
+    # dir params
     dir_images      = "images",
     dir_annotations = "annotations",
-    count           = 5, # images to generate
-    seed            = 0,
-    # more parameters
+    dir_dest        = "generated",
+    # pixel parameters
+    square_width     = 28,   # used if gen_type == "square"
+                             # if square_width <= 0: skip resize
     _720p_height     = 720,
     _720p_width      = 1280,
     _1440p_height    = 1440,
     _1440p_width     = 2560,
     post_height_max  = 144,  # 10% of _1440p_height
     tag_width_max    = 28,   # 20% of post_height_max
-    human_height_max = 864   # 60% of _1440p_height
+    human_height_max = 288   # 20% of _1440p_height
 ):
     # make dir_dest if not exist
     try:
@@ -268,8 +272,23 @@ def generate_images(
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
+    # make dir_images if not exist
+    try:
+        os.makedirs("%s/%s" % (dir_dest, dir_images))
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    # make dir_annotations if not exist
+    try:
+        os.makedirs("%s/%s" % (dir_dest, dir_annotations))
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
     # init randomizer
     np.random.seed(seed)
+    # initialize buckets based on storage_setting
+    image_nps   = list() if storage_setting != "filesystem" else None
+    annotations = list() if storage_setting != "filesystem" else None
     # generate by looping
     # _TODO_ parallelize this
     for idx in range(count):
@@ -288,8 +307,17 @@ def generate_images(
         sector["dist_top"] = np.split(sector_np, sector_np.shape[0])
         # select a background crop, inclusive of sector
         #   select a pixel within sector to center the crop on
-        crop_x = np.random.randint(sector["x_left"], sector["x_right"])[0]
-        crop_y = np.random.randint(sector["y_top"],  sector["y_bottom"])[0]
+        #   break if error in annotations
+        try:
+            crop_x = int(np.random.randint(sector["x_left"], sector["x_right"]))
+        except ValueError:
+            print("ValueError with bg_idx: %d, x_left: %d, x_right: %d" % (bg_idx, sector["x_left"], sector["x_right"]))
+            break
+        try:
+            crop_y = int(np.random.randint(sector["y_top"],  sector["y_bottom"]))
+        except ValueError:
+            print("ValueError with bg_idx: %d, x_left: %d, x_right: %d" % (bg_idx, sector["y_top"], sector["y_bottom"]))
+            break
         #   try to center crop around the current pixel
         crop = dict()
         #   determine crop_x boundaries
@@ -318,11 +346,11 @@ def generate_images(
         #   this differs from convention (using top left pixel) because y_bottom is used to compute distance
         #   determine x position, y position, which must lie within crop and within sector
         insertion_x  = np.random.randint(
-            crop["x_left"] if sector["x_left"] < crop["x_left"] else sector["x_left"], 
-            crop["x_right"] if crop["x_right"] < sector["x_right"] else sector["x_right"]
+            crop["x_left"]  if sector["x_left"] < crop["x_left"]    else sector["x_left"], 
+            crop["x_right"] if crop["x_right"]  < sector["x_right"] else sector["x_right"]
         )
         insertion_y  = np.random.randint(
-            crop["y_top"] if sector["y_top"] < crop["y_top"] else sector["y_top"],
+            crop["y_top"]    if sector["y_top"]  < crop["y_top"]      else sector["y_top"],
             crop["y_bottom"] if crop["y_bottom"] < sector["y_bottom"] else sector["y_bottom"]
         )
         # determine what to insert, then pillowize into image
@@ -366,23 +394,295 @@ def generate_images(
             "y_bottom": crop["y_bottom"]
         }
         #   if insertion point out of safety bounds, set them onto safety bounds
-        insertion_x = insertion_x if insertion_x < safety["x_right"] else safety["x_right"]
-        insertion_y = insertion_y if insertion_y > safety["y_top"]   else safety["y_top"]
+        insertion_x = int(insertion_x if insertion_x < safety["x_right"] else safety["x_right"])
+        insertion_y = int(insertion_y if insertion_y > safety["y_top"]   else safety["y_top"])
         # insert the image
         #   place image onto desert_bg
         bg_img = Image.fromarray(bg)
         padding = (insertion_x, insertion_y - insertion_img.size[1], 0, 0)
         insertion_img_padded = ImageOps.expand(insertion_img, padding)
         overlay = Image.composite(insertion_img_padded, bg_img, insertion_img_padded)
-        overlay.show()
-        # apply cropping
-        overlay_cropped = overlay.crop((crop["x_left"], crop["y_top"], crop["x_right"], crop["y_bottom"]))
-        overlay_cropped.show()
-        # save image to dir_dest/dir_image
-        # save annotations to dir_dest/dir_annotations
-        print("type: %s, x: %s, y: %s" % (selection, insertion_x, insertion_y))
+        # apply cropping onto overlay
+        if gen_type == "full":
+            # update crop region within bounds of bg_img
+            #   adjust horizontal crop
+            if crop["x_left"] < 0: # not likely
+                crop["x_right"] += 0 - crop["x_left"]
+                crop["x_left"] = 0
+            elif crop["x_right"] > bg_img.size[0]:
+                crop["x_left"] -= crop["x_right"] - bg_img.size[0]
+                crop["x_right"] = bg_img.size[0]
+            else:
+                pass # nothing wrong with horizontal crop
+            #   adjust vertical crop
+            if crop["y_top"] < 0: # not likely
+                crop["y_bottom"] += 0 - crop["y_top"]
+                crop["y_top"] = 0
+            elif crop["y_bottom"] > bg_img.size[1]:
+                crop["y_top"] -= crop["y_bottom"] - bg_img.size[1]
+                crop["y_bottom"] = bg_img.size[1]
+            # update insertion point based on crop region
+            insertion_x, insertion_y = insertion_x - crop["x_left"], insertion_y - crop["y_top"]
+            overlay = overlay.crop((crop["x_left"], crop["y_top"], crop["x_right"], crop["y_bottom"]))
+        else: # gen_type == "square"
+            # grab square crop centered on insertion_img
+            #   insertion_img is wider than it is tall, possible for gates
+            if insertion_img.size[0] >= insertion_img.size[1]:
+                # use the width
+                width = insertion_img.size[0]
+                # if we fall below the limit of crop["y_top"], just use crop["y_top"] instead
+                top = crop["y_top"] if (insertion_y - width < crop["y_top"]) else (insertion_y - width)
+                crop["x_left"], crop["y_top"], crop["x_right"], crop["y_bottom"] = insertion_x, top, insertion_x + width, top + width
+            else: # insertion_img is taller than it is wide
+                # use the height
+                height = insertion_img.size[1]
+                # find the leftmost bounds for our crop, which would otherwise be x_insertion
+                leftmost_bound = insertion_x + insertion_img.size[0] - height
+                leftmost_bound = leftmost_bound if crop["x_left"] < leftmost_bound else crop["x_left"]
+                try:
+                    left = leftmost_bound if leftmost_bound == insertion_x else np.random.randint(leftmost_bound, insertion_x)
+                except ValueError:
+                    print(
+                        "ValueError with bg_idx: %d, leftmost_bound: %d, height: %d, insertion_x: %d, insertion_img.size: (%d, %d), crop[\"x_left\"]: %d" % \
+                        (bg_idx, leftmost_bound, height, insertion_x, insertion_img.size[0], insertion_img.size[1], crop["x_left"])
+                    )
+                    break
+                crop["x_left"], crop["y_top"], crop["x_right"], crop["y_bottom"] = left, insertion_y - height, left + height, insertion_y
+            # update crop region within bounds of bg_img
+            #   adjust horizontal crop
+            if crop["x_left"] < 0: # not likely
+                crop["x_right"] += 0 - crop["x_left"]
+                crop["x_left"] = 0
+            elif crop["x_right"] > bg_img.size[0]:
+                crop["x_left"] -= crop["x_right"] - bg_img.size[0]
+                crop["x_right"] = bg_img.size[0]
+            else:
+                pass # nothing wrong with horizontal crop
+            #   adjust vertical crop
+            if crop["y_top"] < 0: # not likely
+                crop["y_bottom"] += 0 - crop["y_top"]
+                crop["y_top"] = 0
+            elif crop["y_bottom"] > bg_img.size[1]:
+                crop["y_top"] -= crop["y_bottom"] - bg_img.size[1]
+                crop["y_bottom"] = bg_img.size[1]
+            overlay = overlay.crop((crop["x_left"], crop["y_top"], crop["x_right"], crop["y_bottom"]))
+            # resize based on width limitations, so long as square_width >= 1
+            if square_width >= 1:
+                overlay = overlay.resize((square_width, square_width))
+        # prepare annotations
+        fn_meta = "%s/%s/%s%s.txt" % (dir_dest, dir_annotations, dir_dest, str(idx).zfill(math.floor(math.log(count+1,10))+1))
+        meta = "%s, %d, %d, %d" % (selection, insertion_x, insertion_y, sector_idx) if gen_type == "full" else \
+               "%s, %d" % (selection, sector_idx)
+        # store images and annotations
+        if storage_setting == "filesystem" or storage_setting == "both":
+            # save image to dir_dest/dir_image
+            fn_image = "%s/%s/%s%s.png" % (dir_dest, dir_images, dir_dest, str(idx).zfill(math.floor(math.log(count+1,10))+1))
+            overlay.save(fn_image, "PNG")
+            # save annotations to dir_dest/dir_annotations
+            f = open(fn_meta, "w")
+            f.write(meta)
+            f.close()
+        if storage_setting == "memory" or storage_setting == "both":
+            image_nps.append(np.asarray(overlay))
+            annotations.append(meta)
+        # handle logging verbosity
+        if verbosity >= 1:
+            print("filename: " + fn_image + ", " + meta)
+            print("bg_img.size: ", bg_img.size)
+            print("crop: ", crop)
+            print('')
+        if verbosity >= 2:
+            overlay.show()
+    # return data depending on storage_setting
+    if storage_setting == "memory" or storage_setting == "both":
+        return image_nps, annotations
 
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "gen_type", 
+        help="generator type. full: 720p image. square: 28x28 image.", 
+        choices=["full", "square"]
+    )
+    parser.add_argument(
+        "count", 
+        help="number of images to generate.", 
+        type=int
+    )
+    parser.add_argument(
+        "--seed", 
+        default=0,
+        help="seed value to initialize np.random.", 
+        type=int
+    )
+    parser.add_argument(
+        "--verbosity", 
+        default=1,
+        help="verbosity for logging image generator telemetry to console.", 
+        choices=[0, 1, 2],
+        type=int
+    )
+    parser.add_argument(
+        "--storage_setting", 
+        default="filesystem",
+        help="determine where generated images and annotations are stored.", 
+        choices=["filesystem", "memory", "both"]
+    )
+    # directory parameters
+    parser.add_argument(
+        "--dir_dataset", 
+        default=os.getcwd(),
+        help="directory of the dataset. use $PWD by default."
+    )
+    parser.add_argument(
+        "--dir_tags",
+        default="ar_tags",
+        help="directory of the ALVAR AR tags."
+    )
+    parser.add_argument(
+        "--dir_posts",
+        default="posts",
+        help="directory of posts."
+    )
+    parser.add_argument(
+        "--dir_humans",
+        default="humans",
+        help="directory of pedestrians."
+    )
+    parser.add_argument(
+        "--dir_bgs",
+        default="desert_backgrounds",
+        help="directory of desert backgrounds."
+    )
+    parser.add_argument(
+        "--dir_images",
+        default="images",
+        help="directory of images."
+    )
+    parser.add_argument(
+        "--dir_annotations",
+        default="annotations",
+        help="directory of image metadata."
+    )
+    parser.add_argument(
+        "--dir_dest",
+        default="generated",
+        help="directory to which generated images are saved"
+    )
+    # pixel params
+    parser.add_argument(
+        "--square_width",
+        default=28,
+        help="relevant if gen_type == \"square\". skip resize if square_width <= 0",
+        type=int
+    )
+    parser.add_argument(
+        "--_720p_height",
+        default=720,
+        help="720p pixel height.",
+        type=int
+    )
+    parser.add_argument(
+        "--_720p_width",
+        default=1280,
+        help="720p pixel width.",
+        type=int
+    )
+    parser.add_argument(
+        "--_1440p_height",
+        default=1440,
+        help="1440p pixel height.",
+        type=int
+    )
+    parser.add_argument(
+        "--_1440p_width",
+        default=2560,
+        help="1440p pixel width.",
+        type=int
+    )
+    parser.add_argument(
+        "--post_height_max",
+        default=144,  # 10% of _1440p_height
+        help="max pixel height for post images.",
+        type=int
+    )
+    parser.add_argument(
+        "--tag_width_max",
+        default=28,   # 20% of post_height_max
+        help="max pixel height for tag images.",
+        type=int
+    )
+    parser.add_argument(
+        "--human_height_max",
+        default=288,  # 20% of _1440p_height
+        help="max pixel height for pedestrian images.",
+        type=int
+    )
+    # load and validate args
+    args = parser.parse_args()
+    assert args.count            >  0
+    assert args.seed             >= 0
+    # assert args.square_width # already validated by parser
+    assert args._720p_height     >  0
+    assert args._720p_width      >  0
+    assert args._1440p_height    >  0
+    assert args._1440p_width     >  0
+    assert args.post_height_max  >  0
+    assert args.tag_width_max    >= 0
+    assert args.human_height_max >  0
 
+    if os.getcwd() != args.dir_dataset:
+        os.chdir(args.dir_dataset)
 
+    tags, posts, humans, bgs, bg_metas = load_data(
+        # directories for data
+        args.dir_dataset,
+        args.dir_tags,
+        args.dir_posts,
+        args.dir_humans,
+        args.dir_bgs,
+        args.dir_images,
+        args.dir_annotations,
+        # parameters
+        args._720p_height,
+        args._720p_width,
+        args._1440p_height,
+        args._1440p_width,
+        args.post_height_max,
+        args.tag_width_max,
+        args.human_height_max 
+    )
+    # generate_images(tags, posts, humans, bgs, bg_metas, gen_type="square", count=150)
+    image_nps, annotations = generate_images(
+        # inputs
+        tags,
+        posts,
+        humans,
+        bgs,
+        bg_metas,
+        # params
+        gen_type         = args.gen_type,
+        count            = args.count,
+        seed             = args.seed,
+        verbosity        = args.verbosity,
+        storage_setting  = args.storage_setting,
+        # dir params
+        dir_images       = args.dir_images,
+        dir_annotations  = args.dir_annotations,
+        dir_dest         = args.dir_dest,
+        # more parameters
+        square_width     = args.square_width,
+        _720p_height     = args._720p_height,
+        _720p_width      = args._720p_width,
+        _1440p_height    = args._1440p_height,
+        _1440p_width     = args._1440p_width,
+        post_height_max  = args.post_height_max,
+        tag_width_max    = args.tag_width_max,
+        human_height_max = args.human_height_max
+    )
 
+    if args.storage_setting == "memory" or args.storage_setting == "both":
+        print("sampling from outputs of generate_image()")
+        Image.fromarray(image_nps[0]).show()
+        print(annotations[0])
