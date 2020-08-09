@@ -223,10 +223,10 @@ def load_data(
 # load_data(os.getcwd(), dir_tags, dir_posts, dir_humans, dir_bgs, dir_images, dir_annotations)
 # tags, posts, humans, bgs, bg_metas = load_data(os.getcwd(), dir_tags, dir_posts, dir_humans, dir_bgs, dir_images, dir_annotations)
 
-
+# image_nps, annotations = generate_images(tags, posts, humans, bgs, bg_metas)
 """ generate_images
     outputs: 
-        if storage_setting == "filesystem:
+        if storage_setting == "filesystem":
             None
         else:
             image_nps:   list of all np.ndarray'd images generated, len(images) == count
@@ -247,7 +247,7 @@ def generate_images(
     verbosity       = 1,             # 0: no verbosity, 
     #                                # 1: print filename and annotations to console
     #                                # 2: previous + show images (avoid for count vars > 30)
-    storage_setting = "filesystem",  # where will generated images and annotations be stored?
+    storage_setting = "memory",      # where will generated images and annotations be stored?
     #                                #  filesystem: store to filesystem at dir_dest
     #                                #  memory:     store and output 
     #                                #  both:       
@@ -470,7 +470,7 @@ def generate_images(
             if square_width >= 1:
                 overlay = overlay.resize((square_width, square_width))
         # prepare annotations
-        fn_meta = "%s/%s/%s%s.txt" % (dir_dest, dir_annotations, dir_dest, str(idx).zfill(math.floor(math.log(count+1,10))+1))
+        fn_image, fn_meta = None, None
         meta = "%s, %d, %d, %d" % (selection, insertion_x, insertion_y, sector_idx) if gen_type == "full" else \
                "%s, %d" % (selection, sector_idx)
         # store images and annotations
@@ -479,6 +479,7 @@ def generate_images(
             fn_image = "%s/%s/%s%s.png" % (dir_dest, dir_images, dir_dest, str(idx).zfill(math.floor(math.log(count+1,10))+1))
             overlay.save(fn_image, "PNG")
             # save annotations to dir_dest/dir_annotations
+            fn_meta = "%s/%s/%s%s.txt" % (dir_dest, dir_annotations, dir_dest, str(idx).zfill(math.floor(math.log(count+1,10))+1))
             f = open(fn_meta, "w")
             f.write(meta)
             f.close()
@@ -487,7 +488,7 @@ def generate_images(
             annotations.append(meta)
         # handle logging verbosity
         if verbosity >= 1:
-            print("filename: " + fn_image + ", " + meta)
+            print("index: %d, meta: " % idx + meta if fn_image is None else "filename: " + fn_image + ", meta: " + meta)
             print("bg_img.size: ", bg_img.size)
             print("crop: ", crop)
             print('')
