@@ -2,6 +2,7 @@
 # auth ntwong0
 
 import os, errno, math, argparse
+from time import perf_counter # used to log performance/timing for generate_images()
 from PIL import Image, ImageOps
 import numpy as np 
 
@@ -291,6 +292,7 @@ def generate_images(
     annotations = list() if storage_setting != "filesystem" else None
     # generate by looping
     # _TODO_ parallelize this
+    t_prev = perf_counter()
     for idx in range(count):
         # select a background
         bg_idx = np.random.randint(0, len(bgs))
@@ -491,6 +493,10 @@ def generate_images(
             print("index: %d, meta: " % idx + meta if fn_image is None else "filename: " + fn_image + ", meta: " + meta)
             print("bg_img.size: ", bg_img.size)
             print("crop: ", crop)
+            # how long did this iteration take?
+            t_curr = perf_counter()
+            print("elapsed time: ", t_curr - t_prev, " s")
+            t_prev = t_curr
             print('')
         if verbosity >= 2:
             overlay.show()
@@ -632,7 +638,7 @@ if __name__ == "__main__":
     assert args.post_height_max  >  0
     assert args.tag_width_max    >= 0
     assert args.human_height_max >  0
-
+    
     if os.getcwd() != args.dir_dataset:
         os.chdir(args.dir_dataset)
 
@@ -655,7 +661,8 @@ if __name__ == "__main__":
         args.human_height_max 
     )
     # generate_images(tags, posts, humans, bgs, bg_metas, gen_type="square", count=150)
-    image_nps, annotations = generate_images(
+    # image_nps, annotations = generate_images(
+    ret_val = generate_images(
         # inputs
         tags,
         posts,
@@ -684,6 +691,7 @@ if __name__ == "__main__":
     )
 
     if args.storage_setting == "memory" or args.storage_setting == "both":
+        image_nps, annotations = ret_val
         print("sampling from outputs of generate_image()")
         Image.fromarray(image_nps[0]).show()
         print(annotations[0])
