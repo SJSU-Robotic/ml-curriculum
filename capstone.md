@@ -30,7 +30,7 @@ The competition requirements and guidelines pertaining to autonomous navigation 
    * AR tags
    * humans
    * desert background
-* [Image augmentation engine for dataset generation](../assets/imgaug_engine.py)
+* [Image augmentation engine for dataset generation](assets/imgaug_engine.py)
 * [User guide for the image augmentation engine](https://docs.google.com/presentation/d/1hxJtgxXey60Fdq6rli5CVl9r8Mb0xHoQaVqNBnzHT5k/edit?usp=sharing)
 
 ---
