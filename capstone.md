@@ -23,13 +23,15 @@ The competition requirements and guidelines pertaining to autonomous navigation 
 * Gate: comprised of two posts
     * Posts are `2 m` or `3 m` apart
 
-### Resources (to be provided)
+### Provided Resources
 
-* Image dataset for posts
-* Image dataset for AR tags
-* Image dataset for humans
-* Image dataset for desert background
-* Image augmentation engine for dataset generation
+* [Image dataset](https://drive.google.com/drive/folders/1wUUMDKXkqzcwiIRr2j4JmGj8vT1KPrP5?usp=sharing), containing
+   * posts
+   * AR tags
+   * humans
+   * desert background
+* [Image augmentation engine for dataset generation](assets/imgaug_engine.py)
+* [User guide for the image augmentation engine](https://docs.google.com/presentation/d/1hxJtgxXey60Fdq6rli5CVl9r8Mb0xHoQaVqNBnzHT5k/edit?usp=sharing)
 
 ---
 
