@@ -310,6 +310,7 @@ def generate_images(
         # select a background crop, inclusive of sector
         #   select a pixel within sector to center the crop on
         #   break if error in annotations
+        #   _TODO_ should happen much earlier, consider moving to load_data(), unless deprecated via reciprocal drop-off approach
         try:
             crop_x = int(np.random.randint(sector["x_left"], sector["x_right"]))
         except ValueError:
@@ -318,7 +319,7 @@ def generate_images(
         try:
             crop_y = int(np.random.randint(sector["y_top"],  sector["y_bottom"]))
         except ValueError:
-            print("ValueError with bg_idx: %d, x_left: %d, x_right: %d" % (bg_idx, sector["y_top"], sector["y_bottom"]))
+            print("ValueError with bg_idx: %d, y_top: %d, y_bottom: %d" % (bg_idx, sector["y_top"], sector["y_bottom"]))
             break
         #   try to center crop around the current pixel
         crop = dict()
