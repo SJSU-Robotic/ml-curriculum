@@ -27,3 +27,6 @@ Adapted from [Spring 2020](http://cs231n.stanford.edu/2020/syllabus.html) and [S
 * Goodfellow, I., Bengio, Y., and Courville, A. (2016). Deep Learning. MIT Press. Retrieved from http://www.deeplearningbook.org/
 ### Publishing your work back to Github
 * Check out [this guide](readings/publishing_to_github.pdf)
+### Summer 2020 Program Calendars
+* [Weekly meeting calendar](https://calendar.google.com/calendar/embed?src=sjsu.edu_lhgicfip5eir47dpm71fa77cbc%40group.calendar.google.com&ctz=America%2FLos_Angeles)
+* [Appointments calendar](https://calendar.google.com/calendar/selfsched?sstoken=UUVQUlVmM0pMOGxifGRlZmF1bHR8YTdjMzkwZTZjZWY5MTk2MGQyZjgxNDFhYWQzNzFlOTI)
