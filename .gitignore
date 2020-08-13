@@ -1,3 +1,7 @@
 **/__pycache__/*
 **/datasets/*
 **/.DS_Store
+assignments/local/2020/assignment2/cs231n/build/
+assignments/local/2020/assignment2/cs231n/im2col_cython.c
+assignments/local/2020/assignment2/cs231n/im2col_cython.cpython-36m-x86_64-linux-gnu.so
+assignments/local/2020/assignment2/cs231n/im2col_cython.so

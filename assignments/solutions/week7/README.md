@@ -1,4 +1,4 @@
-# Week 5 Assignment
+# Week 7 Assignment
 These are the assets related to the week 7 assignments, `Dropout.ipynb` and `ConvolutionalNetworks.ipynb`
 
 Note: the notebook listed here is **not** Google Colab optimized, but can be adapted for Colab. Do the following, then upload to Colab (make sure to adhere to the specified file structure)

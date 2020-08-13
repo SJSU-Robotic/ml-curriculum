@@ -14,4 +14,5 @@ Navigate to [README](README.md) | [Week 4](week4.md) ⬅️ Week 5 ➡️ [Week 
 
 ## Homework
 
-- [Implement a fully-connected neural network](assignments/colab/2020/module2/FullyConnectedNets.ipynb)
+- [Implement a fully-connected neural network](assignments/colab/2020/assignment2/FullyConnectedNets.ipynb)
+    * [Solution](assignments/solutions/week5/README.md)

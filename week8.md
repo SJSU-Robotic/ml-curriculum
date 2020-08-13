@@ -14,4 +14,4 @@ Navigate to [README](README.md) | [Week 7](week7.md) ⬅️ Week 8
 
 - [Run through these PyTorch examples](assignments/pytorch-examples/README.md)
     - Note, if this file doesn't exist, you may need to run `git submodule update --init --recursive`
-- [Implement a convolutional neural network in PyTorch](assignments/colab/2020/module2/PyTorch.ipynb)
+- [Implement a convolutional neural network in PyTorch](assignments/colab/2020/assignment2/PyTorch.ipynb)

@@ -14,7 +14,7 @@ drive.mount('/content/drive', force_remount=True)
 # enter the foldername in your Drive where you have saved the unzipped
 # 'cs231n' folder containing the '.py', 'classifiers' and 'datasets'
 # folders.
-# e.g. 'cs231n/assignments/assignment1/cs231n/'
+# e.g. 'cs231n/assignments/assignment2/cs231n/'
 """
 FOLDERNAME = None
 
