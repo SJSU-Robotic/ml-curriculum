@@ -12,5 +12,6 @@ Navigate to [README](README.md) | [Week 3](week3.md) ⬅️ Week 4 ➡️ [Week 
 
 ## Homework
 
-- [Implement a two-layer neural network](assignments/colab/2020/module1/two_layer_net.ipynb)
-- [Examine the effect of using higher-level representations rather than raw pixel values](assignments/colab/2020/module1/features.ipynb)
+- [Implement a two-layer neural network](assignments/colab/2020/assignment1/two_layer_net.ipynb)
+- [Examine the effect of using higher-level representations rather than raw pixel values](assignments/colab/2020/assignment1/features.ipynb)
+    * [Solution](assignments/solutions/week4/README.md)

@@ -26,5 +26,6 @@ Navigate to [README](README.md) | [Week 5](week5.md) ⬅️ Week 6 ➡️ [Week 
 
 ## Review
 
-- [Implement batch normalization](assignments/colab/2020/module2/BatchNormalization.ipynb)
-
+- [Implement batch normalization](assignments/colab/2020/assignment2/BatchNormalization.ipynb)
+    * [Solution](assignments/solutions/week6/README.md)
+    

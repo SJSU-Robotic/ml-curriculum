@@ -17,5 +17,6 @@ Navigate to [README](README.md) | [Week 6](week6.md) ⬅️ Week 7 ➡️ [Week 
 
 ## Homework
 
-- [Implement dropout and explore model generalization](assignments/colab/2020/module2/Dropout.ipynb)
-- [Implement a convolutional network](assignments/colab/2020/module2/ConvolutionalNetworks.ipynb)
+- [Implement dropout and explore model generalization](assignments/colab/2020/assignment2/Dropout.ipynb)
+- [Implement a convolutional network](assignments/colab/2020/assignment2/ConvolutionalNetworks.ipynb)
+    * [Solution](assignments/solutions/week7/README.md)

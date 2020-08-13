@@ -13,11 +13,8 @@ Navigate to [README](README.md) | [Week 1](week1.md) ⬅️ Week 2 ➡️ [Week 
 * [Lecture 3 | Loss Functions and Optimization](https://www.youtube.com/watch?v=h7iBpEHGVNc&list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv)
 
 ## Homework
-* [Implement a support vector machine](assignments/colab/2020/module1/svm.ipynb)
-    * Solutions:
-        * [`svm.ipynb`](assignments/solutions/week2/svm.ipynb)
-        * [`linear_svm.py`](assignments/solutions/week2/linear_svm.py)
-        * [`linear_classifier.py`](assignments/solutions/week2/linear_classifier.py)
+* [Implement a support vector machine](assignments/colab/2020/assignment1/svm.ipynb)
+    * [Solution](assignments/solutions/week2/README.md)
 
 ## ~~Workshop~~ Solution Recording for Last Week's Exercise
 * [Solution to Week 1's Homework](https://youtu.be/5UFN32Oq3p4)
