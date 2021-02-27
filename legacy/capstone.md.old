@@ -44,7 +44,22 @@ To accommodate the diversity of skill levels in our summer program participants,
 
 ---
 
-### Object Detection and Instance Segmentation
+### Foundational - Image Classification
+
+In this project, you will leverage the neural network training fixture you developed in part five of [the PyTorch assignment](assignments/colab/2020/module2/PyTorch.ipynb) to construct an image classifier for posts and gates.
+
+#### Requirements and Guidelines
+
+* The input image dimension is scaled 2-to-1 w.r.t width and height.
+    * Specifically, the input dimensions are `(64, 32, 3)`
+* The expected image classes are `post`, `gate`, and `human`
+    * **Going beyond**: Consider adding a `none` class
+* Your neural network shall hold no more than 2.4 million parameters
+    * This approximates the resource limitations on embedded platforms such as the NVIDIA Jetson TX2.
+
+---
+
+### Advanced - Object Detection and Instance Segmentation
 
 In this project, you will train a neural network to perform instance segmentation on posts and gates. In particular, you will leverage concepts from the [TorchVision Object Detection Finetuning Tutorial](https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html).
 
