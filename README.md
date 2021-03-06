@@ -9,7 +9,12 @@ Adapted from [PyTorch tutorials](https://pytorch.org/tutorials/), with reference
 
 ---
 ## Syllabus
+A [previous iteration](legacy/README.md) of this curriculum leaned heavily on CS231n's academic approach to learning about neural networks from the ground up. In this current version, we take a more applied approach.
+
+* [Module 0 | Setting Up](module0.md)
 * [Module 1 | The "60-minute blitz"](module1.md)
+* [Module 2 | Linear layers in neural networks](module2.md)
+* [Module 3 | Convolutional neural networks](module3.md)
 * Other modules: TBD
 * [Finale | Capstone Project](capstone.md)
 
