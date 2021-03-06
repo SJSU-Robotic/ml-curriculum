@@ -13,6 +13,8 @@ A [previous iteration](legacy/README.md) of this curriculum leaned heavily on CS
 
 * [Module 0 | Setting Up](module0.md)
 * [Module 1 | The "60-minute blitz"](module1.md)
+* [Module 2 | Linear layers in neural networks](module2.md)
+* [Module 3 | Convolutional neural networks](module3.md)
 * Other modules: TBD
 * [Finale | Capstone Project](capstone.md)
 
